@@ -3,7 +3,9 @@
   "name": "My Extension",
   "version": "1.0",
   "description": "A simple web extension",
-  "permissions": ["storage", "activeTab", "scripting"],
+  "permissions": [
+    "tabs"
+  ],
   "background": {
     "service_worker": "background.js"
   },
@@ -15,8 +17,12 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"]
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ]
     }
   ]
 }

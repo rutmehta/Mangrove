@@ -29,6 +29,7 @@ def receive_url ():
     # Get the title
         title = soup.title.string
         print(title)
+        return jsonify({"title": title})
 
     except requests.RequestException as e:
         print(f"An error occurred with the request: {e}")
