@@ -37,7 +37,7 @@ Summary:"""
         response = requests.post(
             f"{OLLAMA_API}/generate",
             json={
-                "model": "llama2:3.2-3b",
+                "model": "llama3.2",
                 "prompt": prompt,
                 "stream": False,
                 "options": {
@@ -58,23 +58,19 @@ Summary:"""
     except Exception as e:
         print(f"Error calling Ollama API: {str(e)}")
         return "Error generating summary"
-print("Hello")
+    
 @app.route('/embed', methods=['POST'])
 def embed():
-    print("EMSDMADM")
     data = request.json
-    print(data)
     text = data.get('text', '')
     if not text:
         return jsonify({'error': 'No text provided'}), 404
     
     embedding = get_embedding(text)
-    print(embedding)
     return jsonify({'embedding': embedding})
 
 @app.route('/summarize', methods=['POST'])
-async def summarize():
-    
+def summarize():
     data = request.json
     notes = data.get('notes', [])
     if not notes:
