@@ -37,7 +37,7 @@ Summary:"""
         response = requests.post(
             f"{OLLAMA_API}/generate",
             json={
-                "model": "llama3.2",
+                "model": "llama3.2:3b",
                 "prompt": prompt,
                 "stream": False,
                 "options": {
@@ -75,6 +75,14 @@ def summarize():
     notes = data.get('notes', [])
     if not notes:
         return jsonify({'error': 'No notes provided'}), 400
+    
+    # Print copied text to console
+    print("\n=== Copied Text ===")
+    for note in notes:
+        print(f"\nSource: {note['sourceTitle']}")
+        print(f"URL: {note['sourceUrl']}")
+        print(f"Text: {note['text']}")
+    print("=== End Copied Text ===\n")
     
     # Combine notes into a single text
     combined_notes = "\n\n".join([

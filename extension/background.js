@@ -78,6 +78,14 @@ async function compileNotes(notes) {
 // Listen for tab updates
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete' && tab.url) {
+        // Ignore chrome:// pages, new tabs, and empty pages
+        if (tab.url.startsWith('chrome://') || 
+            tab.url === 'about:blank' || 
+            !tab.url || 
+            tab.url === '') {
+            return;
+        }
+
         try {
             // Get the page title
             const title = tab.title || '';
@@ -113,34 +121,32 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 // Listen for messages from content script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.type === 'COPIED_TEXT') {
+        console.log('Received copied text:', request);  // Debug log
         const { text, sourceUrl, sourceTitle } = request;
         
         // Store copied text with source information
-        chrome.storage.local.get(['copiedTexts'], async (result) => {
-            const copiedTexts = result.copiedTexts || [];
-            copiedTexts.push({
-                text,
-                sourceUrl,
-                sourceTitle,
-                timestamp: new Date().toISOString()
-            });
-            
-            // Store the raw copied texts
-            await chrome.storage.local.set({ copiedTexts });
-
-            // Compile notes if we have enough new content
-            if (copiedTexts.length % 5 === 0) { // Compile every 5 new notes
-                const summary = await compileNotes(copiedTexts);
-                if (summary) {
-                    const compiledNotes = result.compiledNotes || [];
-                    compiledNotes.push({
-                        summary,
-                        timestamp: new Date().toISOString(),
-                        sourceNotes: copiedTexts.slice()
-                    });
-                    await chrome.storage.local.set({ compiledNotes });
-                }
+        chrome.storage.local.get(['copiedTexts'], (result) => {
+            try {
+                const copiedTexts = result.copiedTexts || [];
+                copiedTexts.push({
+                    text,
+                    sourceUrl,
+                    sourceTitle,
+                    timestamp: new Date().toISOString()
+                });
+                
+                // Store the raw copied texts
+                chrome.storage.local.set({ copiedTexts }, () => {
+                    console.log('Saved copied text. Total notes:', copiedTexts.length);  // Debug log
+                    if (chrome.runtime.lastError) {
+                        console.error('Error saving copied text:', chrome.runtime.lastError);
+                    }
+                });
+            } catch (error) {
+                console.error('Error processing copied text:', error);
             }
         });
     }
+    // Return true to indicate we will send a response asynchronously
+    return true;
 });

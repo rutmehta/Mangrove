@@ -30,6 +30,19 @@
             border-bottom: 1px solid #fff;
             margin-bottom: -1px;
         }
+        .refresh-button {
+            margin-left: auto;
+            padding: 8px 16px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .refresh-button:hover {
+            background: #c82333;
+        }
         .content {
             display: none;
             height: calc(100% - 60px);
@@ -111,6 +124,7 @@
     <div class="tab-container">
         <div class="tab active" data-tab="history">History Graph</div>
         <div class="tab" data-tab="notes">Notes</div>
+        <button id="refresh-btn" class="refresh-button">Reset All</button>
     </div>
 
     <div id="history" class="content active">
@@ -119,8 +133,6 @@
 
     <div id="notes" class="content">
         <div id="compiled-notes"></div>
-        <h3>Recent Notes</h3>
-        <div id="notes-items"></div>
     </div>
 
     <div id="status-message"></div>

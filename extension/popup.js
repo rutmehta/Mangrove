@@ -168,51 +168,114 @@ function loadHistoryGraph() {
     });
 }
 
+// Function to compile notes using the server
+async function compileNotes(notes) {
+    try {
+        console.log('Compiling notes:', notes);  // Debug log
+        const response = await fetch('http://127.0.0.1:5000/summarize', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ notes })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Compilation response:', data);  // Debug log
+        return data.summary;
+    } catch (error) {
+        console.error('Error compiling notes:', error);
+        return null;
+    }
+}
+
 // Load and display notes
-function loadNotes() {
-    const notesContainer = document.getElementById('notes-items');
+async function loadNotes() {
+    console.log('Loading notes...');  // Debug log
     const compiledContainer = document.getElementById('compiled-notes');
-    notesContainer.innerHTML = '';
     compiledContainer.innerHTML = '';
 
-    chrome.storage.local.get(['copiedTexts', 'compiledNotes'], (result) => {
-        // Display compiled notes
-        const compiledNotes = result.compiledNotes || [];
-        if (compiledNotes.length > 0) {
-            const latestCompiled = compiledNotes[compiledNotes.length - 1];
-            const compiledDiv = document.createElement('div');
-            compiledDiv.className = 'compiled-notes';
-            compiledDiv.innerHTML = `
-                <h3>Latest Summary</h3>
-                <div>${latestCompiled.summary.replace(/\n/g, '<br>')}</div>
-                <div class="timestamp">Compiled at: ${new Date(latestCompiled.timestamp).toLocaleString()}</div>
-            `;
-            compiledContainer.appendChild(compiledDiv);
-        } else {
-            compiledContainer.innerHTML = '<p>No compiled notes yet. Copy some text while browsing to create notes.</p>';
-        }
-
-        // Display raw notes
+    try {
+        const result = await new Promise((resolve) => chrome.storage.local.get(['copiedTexts'], resolve));
         const notes = result.copiedTexts || [];
+        console.log('Found notes:', notes.length);  // Debug log
+        
         if (notes.length > 0) {
-            notes.reverse().forEach(note => {
-                const noteDiv = document.createElement('div');
-                noteDiv.className = 'notes-item';
-                noteDiv.innerHTML = `
-                    <div><strong>Text:</strong> ${note.text}</div>
-                    <div><strong>Source:</strong> <a href="${note.sourceUrl}" class="source-link" target="_blank">${note.sourceTitle}</a></div>
-                    <div class="timestamp">Copied at: ${new Date(note.timestamp).toLocaleString()}</div>
-                `;
-                notesContainer.appendChild(noteDiv);
-            });
+            // Show loading state
+            compiledContainer.innerHTML = '<p>Compiling notes...</p>';
+            
+            // Compile notes
+            const summary = await compileNotes(notes);
+            console.log('Got summary:', summary);  // Debug log
+            
+            if (summary) {
+                // Save the compiled notes
+                const compiledNote = {
+                    summary,
+                    timestamp: new Date().toISOString(),
+                    sourceNotes: notes.slice()
+                };
+                
+                chrome.storage.local.get(['compiledNotes'], (result) => {
+                    try {
+                        const compiledNotes = result.compiledNotes || [];
+                        compiledNotes.push(compiledNote);
+                        chrome.storage.local.set({ compiledNotes }, () => {
+                            if (chrome.runtime.lastError) {
+                                console.error('Error saving compiled notes:', chrome.runtime.lastError);
+                                compiledContainer.innerHTML = '<p>Error saving compiled notes. Please try again.</p>';
+                                return;
+                            }
+                            
+                            // Update the display
+                            const compiledDiv = document.createElement('div');
+                            compiledDiv.className = 'compiled-notes';
+                            compiledDiv.innerHTML = `
+                                <h3>Latest Summary</h3>
+                                <div>${summary.replace(/\n/g, '<br>')}</div>
+                                <div class="timestamp">Compiled at: ${new Date().toLocaleString()}</div>
+                            `;
+                            compiledContainer.innerHTML = '';
+                            compiledContainer.appendChild(compiledDiv);
+                            console.log('Notes compiled and displayed successfully');  // Debug log
+                        });
+                    } catch (error) {
+                        console.error('Error saving compiled notes:', error);
+                        compiledContainer.innerHTML = '<p>Error saving compiled notes. Please try again.</p>';
+                    }
+                });
+            } else {
+                compiledContainer.innerHTML = '<p>Error compiling notes. Please try again.</p>';
+            }
         } else {
-            notesContainer.innerHTML = '<p>No notes yet. Copy text while browsing to create notes.</p>';
+            compiledContainer.innerHTML = '<p>No notes yet. Copy some text while browsing to create notes.</p>';
         }
-    });
+    } catch (error) {
+        console.error('Error in loadNotes:', error);
+        compiledContainer.innerHTML = '<p>Error loading notes. Please try again.</p>';
+    }
 }
+
+// Handle reset button click
+document.getElementById('refresh-btn').addEventListener('click', () => {
+    chrome.storage.local.set({
+        graphData: [],
+        copiedTexts: [],
+        compiledNotes: []
+    }, () => {
+        showStatus('All data has been reset');
+        loadHistoryGraph();
+        loadNotes();
+    });
+});
 
 // Load initial content
 loadHistoryGraph();
+loadNotes();
 
 // Add keyboard shortcuts
 document.addEventListener('keydown', (e) => {
