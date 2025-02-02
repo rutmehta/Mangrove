@@ -1,3 +1,14 @@
+// Show status message
+function showStatus(message, isError = false) {
+    const status = document.getElementById('status-message');
+    status.textContent = message;
+    status.style.background = isError ? '#dc3545' : '#28a745';
+    status.style.display = 'block';
+    setTimeout(() => {
+        status.style.display = 'none';
+    }, 3000);
+}
+
 // Handle tab switching
 document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
@@ -23,6 +34,18 @@ function createGraph(nodes) {
     // Clear previous graph
     d3.select("#graph-container").selectAll("*").remove();
 
+    if (nodes.length === 0) {
+        const container = d3.select("#graph-container")
+            .append("div")
+            .style("text-align", "center")
+            .style("padding-top", "40%");
+        
+        container.append("p")
+            .text("No browsing history recorded yet.")
+            .style("color", "#666");
+        return;
+    }
+
     // Set up SVG
     const width = document.getElementById('graph-container').clientWidth;
     const height = document.getElementById('graph-container').clientHeight;
@@ -36,9 +59,10 @@ function createGraph(nodes) {
     const links = nodes
         .filter(node => node.parentId)
         .map(node => ({
-            source: node.parentId,
-            target: node.url
-        }));
+            source: nodes.find(n => n.url === node.parentId),
+            target: node
+        }))
+        .filter(link => link.source && link.target); // Remove invalid links
 
     // Create force simulation
     const simulation = d3.forceSimulation(nodes)
@@ -46,16 +70,33 @@ function createGraph(nodes) {
             .id(d => d.url)
             .distance(100))
         .force("charge", d3.forceManyBody().strength(-300))
-        .force("center", d3.forceCenter(width / 2, height / 2));
+        .force("center", d3.forceCenter(width / 2, height / 2))
+        .force("collision", d3.forceCollide().radius(50));
+
+    // Create arrow marker
+    svg.append("defs").selectAll("marker")
+        .data(["end"])
+        .join("marker")
+        .attr("id", "arrow")
+        .attr("viewBox", "0 -5 10 10")
+        .attr("refX", 15)
+        .attr("refY", 0)
+        .attr("markerWidth", 6)
+        .attr("markerHeight", 6)
+        .attr("orient", "auto")
+        .append("path")
+        .attr("d", "M0,-5L10,0L0,5")
+        .attr("fill", "#999");
 
     // Add links
     const link = svg.append("g")
         .selectAll("line")
         .data(links)
         .join("line")
-        .attr("class", "link");
+        .attr("class", "link")
+        .attr("marker-end", "url(#arrow)");
 
-    // Add nodes
+    // Create node groups
     const node = svg.append("g")
         .selectAll("g")
         .data(nodes)
@@ -68,18 +109,25 @@ function createGraph(nodes) {
 
     // Add circles to nodes
     node.append("circle")
-        .attr("r", 5);
+        .attr("r", 6)
+        .attr("fill", d => d.parentId ? "#69b3a2" : "#ff7675");
 
     // Add labels to nodes
     node.append("text")
         .attr("dx", 8)
         .attr("dy", ".35em")
-        .text(d => d.title.substring(0, 30) + (d.title.length > 30 ? "..." : ""))
-        .style("font-size", "10px");
+        .text(d => d.title ? (d.title.length > 30 ? d.title.substring(0, 27) + "..." : d.title) : "Untitled")
+        .style("font-size", "12px")
+        .style("fill", "#333");
 
     // Add title tooltip
     node.append("title")
-        .text(d => d.title);
+        .text(d => d.title || d.url);
+
+    // Make nodes clickable
+    node.on("click", (event, d) => {
+        chrome.tabs.create({ url: d.url });
+    });
 
     // Update positions on simulation tick
     simulation.on("tick", () => {
@@ -135,27 +183,42 @@ function loadNotes() {
             const compiledDiv = document.createElement('div');
             compiledDiv.className = 'compiled-notes';
             compiledDiv.innerHTML = `
-                <h3>Latest Compiled Notes</h3>
+                <h3>Latest Summary</h3>
                 <div>${latestCompiled.summary.replace(/\n/g, '<br>')}</div>
-                <div><small>Compiled at: ${new Date(latestCompiled.timestamp).toLocaleString()}</small></div>
+                <div class="timestamp">Compiled at: ${new Date(latestCompiled.timestamp).toLocaleString()}</div>
             `;
             compiledContainer.appendChild(compiledDiv);
+        } else {
+            compiledContainer.innerHTML = '<p>No compiled notes yet. Copy some text while browsing to create notes.</p>';
         }
 
         // Display raw notes
         const notes = result.copiedTexts || [];
-        notes.forEach(note => {
-            const noteDiv = document.createElement('div');
-            noteDiv.className = 'notes-item';
-            noteDiv.innerHTML = `
-                <div><strong>Text:</strong> ${note.text}</div>
-                <div><strong>Source:</strong> <a href="${note.sourceUrl}" target="_blank">${note.sourceTitle}</a></div>
-                <div><strong>Time:</strong> ${new Date(note.timestamp).toLocaleString()}</div>
-            `;
-            notesContainer.appendChild(noteDiv);
-        });
+        if (notes.length > 0) {
+            notes.reverse().forEach(note => {
+                const noteDiv = document.createElement('div');
+                noteDiv.className = 'notes-item';
+                noteDiv.innerHTML = `
+                    <div><strong>Text:</strong> ${note.text}</div>
+                    <div><strong>Source:</strong> <a href="${note.sourceUrl}" class="source-link" target="_blank">${note.sourceTitle}</a></div>
+                    <div class="timestamp">Copied at: ${new Date(note.timestamp).toLocaleString()}</div>
+                `;
+                notesContainer.appendChild(noteDiv);
+            });
+        } else {
+            notesContainer.innerHTML = '<p>No notes yet. Copy text while browsing to create notes.</p>';
+        }
     });
 }
 
 // Load initial content
 loadHistoryGraph();
+
+// Add keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+    if (e.key === '1') {
+        document.querySelector('[data-tab="history"]').click();
+    } else if (e.key === '2') {
+        document.querySelector('[data-tab="notes"]').click();
+    }
+});
