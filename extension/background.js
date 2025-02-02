@@ -1,11 +1,16 @@
 // In-memory database (you might want to use IndexedDB for persistence)
 let graphDatabase = {
     nodes: [],
-    getNodeByUrl: function(url) {
+    getNodeByUrl(url) {
         return this.nodes.find(node => node.url === url);
     },
-    addNode: function(node) {
-        this.nodes.push(node);
+    addNode(node) {
+        // Only add if the URL doesn't exist
+        if (!this.getNodeByUrl(node.url)) {
+            this.nodes.push(node);
+            return true;
+        }
+        return false;
     }
 };
 
@@ -85,6 +90,13 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         }
 
         try {
+            // Check if we already have this URL in our database
+            const existingNode = graphDatabase.getNodeByUrl(tab.url);
+            if (existingNode) {
+                console.log('URL already exists in database:', tab.url);
+                return;
+            }
+
             // Get the page title
             const title = tab.title || '';
             
@@ -106,10 +118,11 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             };
 
             // Add to database
-            graphDatabase.addNode(newNode);
-
-            // Store in chrome.storage for persistence
-            chrome.storage.local.set({ graphData: graphDatabase.nodes });
+            if (graphDatabase.addNode(newNode)) {
+                // Only save to storage if the node was actually added
+                chrome.storage.local.set({ graphData: graphDatabase.nodes });
+                console.log('Added new node:', tab.url);
+            }
         } catch (error) {
             console.error('Error processing new page:', error);
         }

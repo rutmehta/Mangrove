@@ -37,7 +37,7 @@ Summary:"""
         response = requests.post(
             f"{OLLAMA_API}/generate",
             json={
-                "model": "llama3.2",
+                "model": "llama3.2:3b",
                 "prompt": prompt,
                 "stream": False,
                 "options": {
