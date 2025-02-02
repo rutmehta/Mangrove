@@ -1,4 +1,4 @@
-// Show status message
+0.// Show status message
 function showStatus(message, isError = false) {
     const status = document.getElementById('status-message');
     status.textContent = message;
@@ -29,49 +29,45 @@ document.querySelectorAll('.tab').forEach(tab => {
     });
 });
 
-// Create and update D3.js graph
+// Create and update D3.js tree graph
 function createGraph(nodes) {
     // Clear previous graph
-    d3.select("#graph-container").selectAll("*").remove();
+    d3.select('#graph-container').selectAll('*').remove();
 
     if (nodes.length === 0) {
-        const container = d3.select("#graph-container")
-            .append("div")
-            .style("text-align", "center")
-            .style("padding-top", "40%");
-        
-        container.append("p")
-            .text("No browsing history recorded yet.")
-            .style("color", "#666");
+        const container = d3.select('#graph-container')
+            .append('div')
+            .style('text-align', 'center')
+            .style('padding-top', '40%');
+
+        container.append('p')
+            .text('No browsing history recorded yet.')
+            .style('color', '#666');
         return;
     }
 
-    // Set up SVG
-    const width = document.getElementById('graph-container').clientWidth;
-    const height = document.getElementById('graph-container').clientHeight;
-    
-    const svg = d3.select("#graph-container")
-        .append("svg")
-        .attr("width", width)
-        .attr("height", height);
+    // Set up dimensions with scaling factor
+    const width = document.getElementById('graph-container').clientWidth ; // 80% of container width
+    const height = document.getElementById('graph-container').clientHeight; // 80% of container height
 
-    // Create graph data structure
-    const links = nodes
-        .filter(node => node.parentId)
-        .map(node => ({
-            source: nodes.find(n => n.url === node.parentId),
-            target: node
-        }))
-        .filter(link => link.source && link.target); // Remove invalid links
+    // Create a tree layout
+    const treeLayout = d3.tree().size([height, width - 100]); // Right-facing layout
 
-    // Create force simulation
-    const simulation = d3.forceSimulation(nodes)
-        .force("link", d3.forceLink(links)
-            .id(d => d.url)
-            .distance(100))
-        .force("charge", d3.forceManyBody().strength(-300))
-        .force("center", d3.forceCenter(width / 2, height / 2))
-        .force("collision", d3.forceCollide().radius(50));
+    // Create root node
+    const root = d3.stratify()
+        .id(d => d.url)
+        .parentId(d => d.parentId)(nodes);
+
+    // Generate the tree structure
+    treeLayout(root);
+
+    // Create SVG
+    const svg = d3.select('#graph-container')
+        .append('svg')
+        .attr('width', width)
+        .attr('height', height)
+        .append('g')
+        .attr('transform', 'translate(50, 50)'); // Center the graph
 
     // Create arrow marker
     svg.append("defs").selectAll("marker")
@@ -88,76 +84,75 @@ function createGraph(nodes) {
         .attr("d", "M0,-5L10,0L0,5")
         .attr("fill", "#999");
 
-    // Add links
-    const link = svg.append("g")
-        .selectAll("line")
-        .data(links)
-        .join("line")
-        .attr("class", "link")
-        .attr("marker-end", "url(#arrow)");
+    // Create links
+    svg.selectAll('line')
+        .data(root.links())
+        .join('line')
+        .attr('class', 'link')
+        .attr('x1', d => d.source.y)
+        .attr('y1', d => d.source.x)
+        .attr('x2', d => d.target.y)
+        .attr('y2', d => d.target.x)
+        .attr('marker-end', 'url(#arrow)');
 
-    // Create node groups
-    const node = svg.append("g")
-        .selectAll("g")
-        .data(nodes)
-        .join("g")
-        .attr("class", "node")
-        .call(d3.drag()
-            .on("start", dragstarted)
-            .on("drag", dragged)
-            .on("end", dragended));
+    // Create a tooltip div
+    const tooltip = d3.select('#graph-container').append('div')
+        .style('position', 'absolute')
+        .style('visibility', 'hidden')
+        .style('background', '#fff')
+        .style('border', '1px solid #ccc')
+        .style('border-radius', '4px')
+        .style('padding', '5px')
+        .style('pointer-events', 'none');
 
-    // Add circles to nodes
-    node.append("circle")
-        .attr("r", 6)
-        .attr("fill", d => d.parentId ? "#69b3a2" : "#ff7675");
+    // Add nodes
+    const node = svg.append('g')
+        .selectAll('circle')
+        .data(root.descendants())
+        .join('circle')
+        .attr('r', 10) // Decrease the radius to make nodes smaller
+        .attr('fill', '#69b3a2')
+        .attr('stroke', '#fff')
+        .attr('stroke-width', 2)
+        .attr('cx', d => d.y)
+        .attr('cy', d => d.x)
+        .on('mouseover', (event, d) => {
+            tooltip.html(d.data.title || d.data.url) // Show title or URL
+                .style('visibility', 'visible');
+        })
+        .on('mousemove', (event) => {
+            tooltip.style('top', (event.pageY - 10) + 'px')
+                .style('left', (event.pageX + 10) + 'px');
+        })
+        .on('mouseout', () => {
+            tooltip.style('visibility', 'hidden');
+        });
 
-    // Add labels to nodes
-    node.append("text")
-        .attr("dx", 8)
-        .attr("dy", ".35em")
-        .text(d => d.title ? (d.title.length > 30 ? d.title.substring(0, 27) + "..." : d.title) : "Untitled")
-        .style("font-size", "12px")
-        .style("fill", "#333");
+    // Add small titles above each node
+    svg.append('g')
+        .selectAll('text')
+        .data(root.descendants())
+        .join('text')
+        .attr('dx', 0)
+        .attr('dy', -20) // Position above the node
+        .attr('x', d => d.y)
+        .attr('y', d => d.x)
+        .text(d => d.data.title ? (d.data.title.length > 10 ? d.data.title.substring(0, 10) + '...' : d.data.title) : 'Untitled')
+        .style('font-size', '10px')
+        .style('text-anchor', 'middle')
+        .style('fill', '#333');
 
     // Add title tooltip
-    node.append("title")
-        .text(d => d.title || d.url);
+    svg.append('g')
+        .selectAll('title')
+        .data(root.descendants())
+        .join('title')
+        .text(d => d.data.title || d.data.url);
 
     // Make nodes clickable
     node.on("click", (event, d) => {
-        chrome.tabs.create({ url: d.url });
+        chrome.tabs.create({ url: d.data.url });
     });
-
-    // Update positions on simulation tick
-    simulation.on("tick", () => {
-        link
-            .attr("x1", d => d.source.x)
-            .attr("y1", d => d.source.y)
-            .attr("x2", d => d.target.x)
-            .attr("y2", d => d.target.y);
-
-        node
-            .attr("transform", d => `translate(${d.x},${d.y})`);
-    });
-
-    // Drag functions
-    function dragstarted(event) {
-        if (!event.active) simulation.alphaTarget(0.3).restart();
-        event.subject.fx = event.subject.x;
-        event.subject.fy = event.subject.y;
-    }
-
-    function dragged(event) {
-        event.subject.fx = event.x;
-        event.subject.fy = event.y;
-    }
-
-    function dragended(event) {
-        if (!event.active) simulation.alphaTarget(0);
-        event.subject.fx = null;
-        event.subject.fy = null;
-    }
 }
 
 // Load and display history graph
