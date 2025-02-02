@@ -32,7 +32,6 @@ Provide a clear, well-structured summary that:
 3. Maintains original context and sources
 
 Summary:"""
-    
     try:
         # Call Ollama API
         response = requests.post(
@@ -50,6 +49,7 @@ Summary:"""
         )
         
         if response.status_code == 200:
+            print(response.json()['response'].strip())
             return response.json()['response'].strip()
         else:
             print(f"Error from Ollama API: {response.text}")
@@ -58,19 +58,23 @@ Summary:"""
     except Exception as e:
         print(f"Error calling Ollama API: {str(e)}")
         return "Error generating summary"
-
+print("Hello")
 @app.route('/embed', methods=['POST'])
 def embed():
+    print("EMSDMADM")
     data = request.json
+    print(data)
     text = data.get('text', '')
     if not text:
-        return jsonify({'error': 'No text provided'}), 400
+        return jsonify({'error': 'No text provided'}), 404
     
     embedding = get_embedding(text)
+    print(embedding)
     return jsonify({'embedding': embedding})
 
 @app.route('/summarize', methods=['POST'])
-def summarize():
+async def summarize():
+    
     data = request.json
     notes = data.get('notes', [])
     if not notes:
@@ -81,7 +85,7 @@ def summarize():
         f"Source: {note['sourceTitle']}\nURL: {note['sourceUrl']}\nText: {note['text']}"
         for note in notes
     ])
-    
+
     summary = generate_notes_summary(combined_notes)
     return jsonify({'summary': summary})
 

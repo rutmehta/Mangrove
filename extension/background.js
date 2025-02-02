@@ -36,14 +36,18 @@ function findMostSimilarNode(embedding) {
 // Function to get vector embedding from the server
 async function getVectorEmbedding(text) {
     try {
-        const response = await fetch('http://localhost:5000/embed', {
+        console.log(text)
+        const response = await fetch('http://127.0.0.1:5000/embed', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ text })
         });
+        
         const data = await response.json();
+        console.log(JSON.stringify(data))
+
         return data.embedding;
     } catch (error) {
         console.error('Error getting embedding:', error);
@@ -55,7 +59,8 @@ async function getVectorEmbedding(text) {
 // Function to compile notes using LLaMA
 async function compileNotes(notes) {
     try {
-        const response = await fetch('http://localhost:5000/summarize', {
+        //console.log(notes)
+        const response = await fetch('http://127.0.0.1:5000/summarize', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
