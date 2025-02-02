@@ -3,3 +3,4 @@ flask-cors==3.0.10
 sentence-transformers==2.2.2
 huggingface-hub==0.19.4
 requests==2.31.0
+Werkzeug==2.3.7
