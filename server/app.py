@@ -37,7 +37,7 @@ Summary:"""
         response = requests.post(
             f"{OLLAMA_API}/generate",
             json={
-                "model": "llama3.2:3b",
+                "model": "llama3.2",
                 "prompt": prompt,
                 "stream": False,
                 "options": {
@@ -95,7 +95,7 @@ def summarize():
 
 if __name__ == '__main__':
     # First, ensure the model is pulled
-    print("Pulling LLaMA 3.2 3B model...")
+    print("Pulling LLaMA 3.3 3B model...")
     try:
         requests.post(f"{OLLAMA_API}/pull", json={"name": "llama2:3.2-3b"})
         print("Model pulled successfully!")

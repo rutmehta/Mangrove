@@ -36,7 +36,6 @@ function findMostSimilarNode(embedding) {
 // Function to get vector embedding from the server
 async function getVectorEmbedding(text) {
     try {
-        console.log(text)
         const response = await fetch('http://127.0.0.1:5000/embed', {
             method: 'POST',
             headers: {
@@ -46,7 +45,6 @@ async function getVectorEmbedding(text) {
         });
         
         const data = await response.json();
-        console.log(JSON.stringify(data))
 
         return data.embedding;
     } catch (error) {
