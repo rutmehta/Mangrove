@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from sentence_transformers import SentenceTransformer
-import ollama
+import requests
 import json
 
 app = Flask(__name__)
@@ -11,6 +11,9 @@ CORS(app)
 print("Loading models...")
 embedding_model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 print("Models loaded successfully!")
+
+# Ollama API endpoint
+OLLAMA_API = "http://localhost:11434/api"
 
 def get_embedding(text):
     # Generate embedding using sentence-transformers
@@ -31,20 +34,29 @@ Provide a clear, well-structured summary that:
 Summary:"""
     
     try:
-        # Generate summary using Ollama
-        response = ollama.generate(
-            model='llama2:3.2-3b',
-            prompt=prompt,
-            options={
-                'temperature': 0.7,
-                'top_p': 0.95,
-                'max_tokens': 500
+        # Call Ollama API
+        response = requests.post(
+            f"{OLLAMA_API}/generate",
+            json={
+                "model": "llama2:3.2-3b",
+                "prompt": prompt,
+                "stream": False,
+                "options": {
+                    "temperature": 0.7,
+                    "top_p": 0.95,
+                    "max_tokens": 500
+                }
             }
         )
-        return response['response'].strip()
+        
+        if response.status_code == 200:
+            return response.json()['response'].strip()
+        else:
+            print(f"Error from Ollama API: {response.text}")
+            return "Error generating summary"
             
     except Exception as e:
-        print(f"Error generating summary: {str(e)}")
+        print(f"Error calling Ollama API: {str(e)}")
         return "Error generating summary"
 
 @app.route('/embed', methods=['POST'])
@@ -77,7 +89,7 @@ if __name__ == '__main__':
     # First, ensure the model is pulled
     print("Pulling LLaMA 3.2 3B model...")
     try:
-        ollama.pull('llama2:3.2-3b')
+        requests.post(f"{OLLAMA_API}/pull", json={"name": "llama2:3.2-3b"})
         print("Model pulled successfully!")
     except Exception as e:
         print(f"Error pulling model: {str(e)}")
