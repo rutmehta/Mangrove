@@ -1,0 +1,18 @@
+NOTE WHEN CODING TRY TO FUCK AROUND WITH TOO MANY THINGS AT ONCE ESPECIALY WITH THE CSS. ITS VERY FINICKY. ALSO THERE ARE A FEW BUGS BUT FUCK IT.
+NOTE MIGHT NEED TO CHANGE FILE PATHS ON YOUR SYSTEMS TO MAKE IT WORK LIKE MANGROVE IMAGE AND OTHERS 
+
+All the files for front_page (css/html/js) & preload-webveiw.js are for the green home page with the Mangrove Logo. 
+This file just acts as a home page and only has the search bar for now but we can extend it with pins and a setting page and what not (basically a google.com clone rn)
+front_page.js gets the input and sends it to the parent via electrons tools.
+Before you use inter process communication in electron you need to expose them using preload files (like setting them as public) and use the nodeIntegration flag.
+
+This is how we load it in index.html:
+    <webview id="webview" src="front_page.html" nodeIntegration preload="preload-webveiw.js"></webview>
+
+index files (except index.js (index.js is not the source for index.html IDK why its designed like this but this is the default so i kept it.)) and renderer.js is the actual front end of the app (right now just the tool bar). 
+renderer.js handles the javascript (some animation / tab location / tab management/ initialization) for the ui. This is the core of the app rn. 
+For Renderer.js to work, you also got preload the files to expose electrons processes. 
+
+index.js is kind of like the actual backend of the app. Not much happens here yet instead of just creating the app and handling signals and communications from the other proceses. 
+
+Theres no need to touch rust rn 

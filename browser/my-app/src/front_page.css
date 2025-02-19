@@ -1,0 +1,56 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+      Arial, sans-serif;
+  
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;  /* Stack items vertically */
+    justify-content: center;  /* Horizontally center */
+    align-items: center;      /* Vertically center */
+    background: linear-gradient(to right, #1C391Cff, #3C543Bff); /* Example gradient */
+  }
+
+  #header-container{
+    display: flex;
+    align-items: center;  /* Vertically aligns both elements */
+  }
+  
+  #header-svg{
+    transform: translateY(-20vh);
+    width: 120px;
+    height: auto;
+  }
+  
+  h1{
+    margin: 20px; /* Adds 20px space below the textbox */
+    font-size: 70px;
+    color:#ffffff;
+    font-family: 'Roboto', sans-serif;
+    transform: translateY(-20vh);
+  }
+  
+  #Mangrove_search {
+    color: #303030;
+  
+    font-family: 'Roboto', sans-serif;
+    padding: 5px;
+    font-size: 30px;
+    width: 110vh; /* Adjust the width as needed */
+    transform: translateY(-20vh);
+  
+    background-color: rgba(255, 255, 255, 0.3); /* White with 70% opacity */
+    border: none;
+    outline: none;
+    box-shadow: 10px; /* Removes any shadow effect */
+    border-radius: 12px; /* Rounds the corners */
+    transition: background-color 0.3s ease; /* Smooth transition */
+  }
+  
+  #Mangrove_search::placeholder {
+    color: #303030;  /* Changes the color of the placeholder text */
+  }
+
+  #Mangrove_search:hover{
+    background-color: rgba(255, 255, 255, 0.5); /* Color when hovered */
+  }

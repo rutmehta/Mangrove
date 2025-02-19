@@ -1,0 +1,1 @@
+cargo:rustc-env=MIME_TYPES_GENERATED_PATH=/Users/royhouwayek/Documents/WorkSpaces/hackru2025/browser/my-app/backend/target/debug/build/mime_guess-b8a770369aee357f/out/mime_types_generated.rs

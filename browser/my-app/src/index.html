@@ -1,0 +1,31 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Mangrove</title>
+  <link rel="stylesheet" href="index.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div id="toolbar">
+    <div id="tab-group">
+      <button id="tab">Mangrove</button>
+      <button id="newTabButton">+</button>
+    </div>
+
+    <div id="nav-group">
+      <input type="text" id="search-bar" placeholder="Search here">
+    </div>
+  </div>
+
+  <div id="webview-container">
+    <webview id="webview" src="front_page.html" nodeIntegration preload="preload-webveiw.js"></webview>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+
+</html>

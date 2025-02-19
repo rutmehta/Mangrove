@@ -1,0 +1,119 @@
+html, body {
+  height: 100%;  /* Ensure the whole document takes up the full height */
+  margin: 0;
+  padding: 0;
+  background-color: #1e1e1e; /* Ensures no white background */
+  overflow-x: hidden; /* Prevents horizontal scrolling */
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  display: flex;
+  flex-direction: column;  /* Stack items vertically */
+  justify-content: flex-start;  /* Align content to the top */
+}
+
+#toolbar {
+  height: 90px;  /* Fixed height for the toolbar */
+  background: #1e1e1e;
+  margin-left: 80px;
+}
+
+@keyframes grow {
+  0% {
+    width: 1px
+  }
+  100% {
+    flex: auto;
+  }
+}
+
+#tab-group{
+  display: flex;
+  flex-wrap: nowrap; /* Prevent wrapping to a new row */
+  gap: 7px;
+  max-width: 90%;
+  justify-content: flex-start; /* Align items to the left */
+  align-items: center; /* Align items at the bottom */
+  height: 50%;
+
+}
+
+#tab {
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+  background: #303030;
+  text-align: center;
+  height: 30px;
+  border-radius: 10px; /* Top-left and top-right curved */
+  flex-grow: 1; /* Allow the tabs to grow */
+  flex-shrink: 1; /* Allow the tabs to shrink */
+  /*min-width: 100px; /* Set a minimum width to prevent them from getting too small */
+  /*max-width: 200px;*/
+  width: 100px;
+  color: #646464;
+  animation: grow 1s;
+  transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+#tab:hover{
+  background-color: #3d3d3d; /* Color when hovered */
+}
+
+#nav-group {  
+  display: flex;
+  flex-wrap: nowrap; /* Prevent wrapping to a new row */
+  width: 100%;
+  justify-content: flex-start; /* Align items to the left */
+  align-items: center; /* Align items at the bottom */
+  height: 50%;
+}
+
+#search-bar{
+  background: #303030;
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+  text-align: center;
+  height: 80%;
+  width: 90%;
+  border-radius: 10px;
+  color: #646464;
+  transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+#search-bar:hover {
+  background-color: #3d3d3d; /* Color when hovered */
+}
+
+#newTabButton {
+  background: #303030;
+  color: #646464;
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  transition: background-color 0.3s ease; /* Smooth transition */
+  flex-shrink: 0;
+}
+
+#newTabButton:hover {
+  background-color: #3d3d3d; /* Color when hovered */
+}
+
+#webview-container {
+  flex-grow: 1;  /* Allow #foo to take the remaining space */
+  display: flex;  /* Use flexbox layout inside #foo */
+  width: 100%;  /* Full width */
+  height: 100%;  /* Full height available to #foo */
+}
+
+webview {
+  flex-grow: 1;  /* Ensure the webview takes up all available space inside #foo */
+  width: 100%;  /* Full width */
+  height: 100%;  /* Full height */
+}
+

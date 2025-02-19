@@ -1,0 +1,12 @@
+/Users/royhouwayek/Documents/WorkSpaces/hackru2025/browser/my-app/backend/target/release/deps/libmime_guess-0790ee10be4ef2c4.rmeta: /Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mime_guess-2.0.5/src/lib.rs /Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mime_guess-2.0.5/src/impl_bin_search.rs /Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mime_guess-2.0.5/src/mime_types.rs /Users/royhouwayek/Documents/WorkSpaces/hackru2025/browser/my-app/backend/target/release/build/mime_guess-27a6d6b19ead46f3/out/mime_types_generated.rs
+
+/Users/royhouwayek/Documents/WorkSpaces/hackru2025/browser/my-app/backend/target/release/deps/libmime_guess-0790ee10be4ef2c4.rlib: /Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mime_guess-2.0.5/src/lib.rs /Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mime_guess-2.0.5/src/impl_bin_search.rs /Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mime_guess-2.0.5/src/mime_types.rs /Users/royhouwayek/Documents/WorkSpaces/hackru2025/browser/my-app/backend/target/release/build/mime_guess-27a6d6b19ead46f3/out/mime_types_generated.rs
+
+/Users/royhouwayek/Documents/WorkSpaces/hackru2025/browser/my-app/backend/target/release/deps/mime_guess-0790ee10be4ef2c4.d: /Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mime_guess-2.0.5/src/lib.rs /Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mime_guess-2.0.5/src/impl_bin_search.rs /Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mime_guess-2.0.5/src/mime_types.rs /Users/royhouwayek/Documents/WorkSpaces/hackru2025/browser/my-app/backend/target/release/build/mime_guess-27a6d6b19ead46f3/out/mime_types_generated.rs
+
+/Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mime_guess-2.0.5/src/lib.rs:
+/Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mime_guess-2.0.5/src/impl_bin_search.rs:
+/Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mime_guess-2.0.5/src/mime_types.rs:
+/Users/royhouwayek/Documents/WorkSpaces/hackru2025/browser/my-app/backend/target/release/build/mime_guess-27a6d6b19ead46f3/out/mime_types_generated.rs:
+
+# env-dep:MIME_TYPES_GENERATED_PATH=/Users/royhouwayek/Documents/WorkSpaces/hackru2025/browser/my-app/backend/target/release/build/mime_guess-27a6d6b19ead46f3/out/mime_types_generated.rs

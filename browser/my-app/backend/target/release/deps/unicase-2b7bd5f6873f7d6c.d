@@ -1,0 +1,10 @@
+/Users/royhouwayek/Documents/WorkSpaces/hackru2025/browser/my-app/backend/target/release/deps/libunicase-2b7bd5f6873f7d6c.rmeta: /Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unicase-2.8.1/src/lib.rs /Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unicase-2.8.1/src/ascii.rs /Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unicase-2.8.1/src/unicode/mod.rs /Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unicase-2.8.1/src/unicode/map.rs
+
+/Users/royhouwayek/Documents/WorkSpaces/hackru2025/browser/my-app/backend/target/release/deps/libunicase-2b7bd5f6873f7d6c.rlib: /Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unicase-2.8.1/src/lib.rs /Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unicase-2.8.1/src/ascii.rs /Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unicase-2.8.1/src/unicode/mod.rs /Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unicase-2.8.1/src/unicode/map.rs
+
+/Users/royhouwayek/Documents/WorkSpaces/hackru2025/browser/my-app/backend/target/release/deps/unicase-2b7bd5f6873f7d6c.d: /Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unicase-2.8.1/src/lib.rs /Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unicase-2.8.1/src/ascii.rs /Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unicase-2.8.1/src/unicode/mod.rs /Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unicase-2.8.1/src/unicode/map.rs
+
+/Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unicase-2.8.1/src/lib.rs:
+/Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unicase-2.8.1/src/ascii.rs:
+/Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unicase-2.8.1/src/unicode/mod.rs:
+/Users/royhouwayek/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unicase-2.8.1/src/unicode/map.rs:
