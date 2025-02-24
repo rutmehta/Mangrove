@@ -1,0 +1,15 @@
+directories:
+  output: dist
+  buildResources: build
+appId: com.example.electronbrowser
+mac:
+  category: public.app-category.utilities
+  target: dmg
+  icon: assets/icons/icon.icns
+  hardenedRuntime: true
+  gatekeeperAssess: false
+extraResources:
+  - from: assets/
+    to: assets
+files: []
+electronVersion: 34.2.0
